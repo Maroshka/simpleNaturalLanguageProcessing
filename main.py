@@ -71,15 +71,9 @@ def mkvModel(text, n):
 	chain = re.sub(r'^\s', '', chain)
 	chain = chain[0].upper()+chain[1:]
 	return chain
-
-if __name__ == '__main__':
-	content = str(urlopen("http://pythonscraping.com/files/inaugurationSpeech.txt").read())
-	ngram = ngrams(content, 2)
-	sortedngms = sorted(ngram.items(), key = operator.itemgetter(1), reverse=True)
-	topgrams = sortedngms[:5]
-     
+def summarize(article):
 	tokenizer = PunktSentenceTokenizer()
-	tokens = tokenizer.sentences_from_text(content)
+	tokens = tokenizer.sentences_from_text(article)
 	summary = []
 	# make a summary of William Henry's speach
 	for popgram in topgrams:
@@ -87,10 +81,17 @@ if __name__ == '__main__':
 			if popgram[0] in token.lower():
 				summary.append(token)
 				break
+	return summary
+
+if __name__ == '__main__':
+	#Print a summary of William Henry's speach
+	content = str(urlopen("http://pythonscraping.com/files/inaugurationSpeech.txt").read())
+	summary = summarize(content)
 	print summary
-	wdlist = clean(content)
-	wdDict = buildWordDict(wdlist)
-	print wdDict
+	#find the top ngrams in the text
+	ngram = ngrams(article, 2)
+	sortedngms = sorted(ngram.items(), key = operator.itemgetter(1), reverse=True)
+	topgrams = sortedngms[:5]
 	# generate a paragraph using markov model
 	text = mkvModel(content, 80)
 	print text

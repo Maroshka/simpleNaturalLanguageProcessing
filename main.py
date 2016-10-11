@@ -51,7 +51,7 @@ def buildWordDict(wdlist):
 	for i in range(0, len(wdlist)-2):
 		if wdlist[i] not in wdDict:
 			wdDict[wdlist[i]] = {}
-		if wdlist[i+1] not wdDict[wdlist[i]]:
+		if wdlist[i+1] not in wdDict[wdlist[i]]:
 			wdDict[wdlist[i]][wdlist[i+1]] = 1
 		else:
 			wdDict[wdlist[i]][wdlist[i+1]] += 1 
@@ -66,8 +66,10 @@ def mkvModel(text, n):
 	for i in range(0, n):
 		chain = chain+' '+startwd
 		tmpdict = wdDict[startwd]
-		startwd = tmpdict[randint(0, len(tmpdict.keys())-1)]
-		
+		# print startwd
+		startwd = tmpdict.keys()[randint(0, len(tmpdict.keys())-1)]
+	chain = re.sub(r'^\s', '', chain)
+	chain = chain[0].upper()+chain[1:]
 	return chain
 
 if __name__ == '__main__':
@@ -86,3 +88,9 @@ if __name__ == '__main__':
 				summary.append(token)
 				break
 	print summary
+	wdlist = clean(content)
+	wdDict = buildWordDict(wdlist)
+	print wdDict
+	# generate a paragraph using markov model
+	text = mkvModel(content, 80)
+	print text

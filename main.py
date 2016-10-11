@@ -4,6 +4,7 @@ import string
 import re
 import operator
 from nltk import PunktSentenceTokenizer
+from random import randint
 
 def isCommon(ngram):
 	commonWords = ["the", "be", "and", "of", "a", "in", "to", "have", "it",\
@@ -44,6 +45,30 @@ def ngrams(inp, n):
 	grams = {item:sum([i==item for i in out]) for item in outset if not isCommon(item)}
 	return grams
 
+#markov model
+def buildWordDict(wdlist):
+	wdDict = {}
+	for i in range(0, len(wdlist)-2):
+		if wdlist[i] not in wdDict:
+			wdDict[wdlist[i]] = {}
+		if wdlist[i+1] not wdDict[wdlist[i]]:
+			wdDict[wdlist[i]][wdlist[i+1]] = 1
+		else:
+			wdDict[wdlist[i]][wdlist[i+1]] += 1 
+
+	return wdDict
+
+def mkvModel(text, n):
+	wdlist = clean(text)
+	wdDict = buildWordDict(wdlist)
+	startwd = wdlist[randint(0, len(wdlist)-1)]
+	chain = ''
+	for i in range(0, n):
+		chain = chain+' '+startwd
+		tmpdict = wdDict[startwd]
+		startwd = tmpdict[randint(0, len(tmpdict.keys())-1)]
+		
+	return chain
 
 if __name__ == '__main__':
 	content = str(urlopen("http://pythonscraping.com/files/inaugurationSpeech.txt").read())
